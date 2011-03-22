@@ -1,0 +1,6 @@
+; $Id$
+name = Flexibledate
+description = Defines a field type that can contain either a full date or a quarter.
+dependencies[] = content
+package = CCK
+core = 6.x

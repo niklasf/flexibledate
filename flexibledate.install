@@ -1,0 +1,34 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_install().
+ */
+function flexibledate_install() {
+  drupal_load('module', 'content');
+  content_notify('install', 'flexibledate');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function flexibledate_uninstall() {
+  drupal_load('module', 'content');
+  content_notify('uninstall', 'flexibledate');
+}
+
+/**
+ * Implementation of hook_enable().
+ */
+function flexibledate_enable() {
+  drupal_load('module', 'content');
+  content_notify('enable', 'flexibledate');
+}
+
+/**
+ * Implementation of hook_disable().
+ */
+function flexibledate_disable() {
+  drupal_load('module', 'content');
+  content_notify('disable', 'flexibledate');
+}
