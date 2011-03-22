@@ -259,3 +259,33 @@ function _flexibledate_to_text($value) {
     return ((date('m', $value) + 2) / 3) . '/' . date('Y', $value);
   }
 }
+
+/**
+ * Convert a flexibledate value to an array that has these indexes:
+ * - year
+ * - month
+ * - day
+ * - quarter
+ * Either year, month and day ar set or year and quarter.
+ * FALSE for no valid flexibledate.
+ */
+function _flexibledate_to_values($value) {
+  if ($value === FALSE) {
+    return FALSE;
+  }
+  
+  $value = intval($value);
+  
+  if ($value % 2 == 0) { // Full date
+    return array(
+      'year' => intval(date('Y', $value)),
+      'month' => intval(date('m', $value)),
+      'day' => intval(date('d', $value)),
+    );
+  } else { // Quarter
+    return array(
+      'year' => intval(date('Y', $value)),
+      'quarter' => (date('m', $value) + 2) / 3,
+    );
+  }
+}
