@@ -9,7 +9,6 @@ function flexibledate_field_info() {
     'flexibledate' => array(
       'label' => t('Flexibledate'),
       'description' => t('Store a full date or a quarter'),
-      // TODO: Do research on content_icon
     ),
   );
 }
@@ -50,12 +49,16 @@ function flexibledate_field_settings($op, $field) {
  */
 function flexibledate_field($op, &$node, $field, &$items, $teaser, $page) {
   switch ($op) {
-    case 'sanitize':
-      foreach ($items as $delta => $item) {
-        // TODO: Is this really sanitize?
-        $items[$delta]['safe'] = _flexibledate_to_text($item['value']);
+    case 'validate':
+      if (is_array($items)) {
+        foreach ($items as $delta => $item) {
+          $error_element = $field['field_name'] . '][' . $delta . '][value';
+          if ($item['value'] !== NULL && $item['value'] === FALSE) {
+            form_set_error($error_element, t('The value must be a valid date or quarter.'));
+          }
+        }
       }
-      break;
+      return $items;
   }
 }
 
@@ -63,7 +66,7 @@ function flexibledate_field($op, &$node, $field, &$items, $teaser, $page) {
  * Implementation of hook_content_is_empty().
  */
 function flexibledate_content_is_empty($item, $field) {
-  return empty($item['value']);
+  return $item['value'] === '' || $item['value'] === FALSE || $item['value'] === NULL;
 }
 
 // TODO: Consider implementing hook_content_generate().
@@ -99,7 +102,7 @@ function flexibledate_field_formatter_info() {
  * Defauilt theme function.
  */
 function theme_flexibledate_formatter_default($element) {
-  return $element['#item']['safe'];
+  return _flexibledate_to_text($element['#item']['value']);
 }
 
 /**
@@ -160,12 +163,7 @@ function flexibledate_widget(&$form, &$form_state, $field, $items, $delta = 0) {
  * FAPI validation of a flexibledate widget.
  */
 function flexibledate_validate($element, &$form_state) {
-  $value = _flexibledate_from_text($element['#value']);
-  if ($value === FALSE) {
-    form_set_error($element, 'Haha!');
-  } else {
-    form_set_value($element, $value, $form_state);
-  }
+  form_set_value($element, trim($element['#value']) !== '' ? _flexibledate_from_text($element['#value']) : NULL, $form_state);
 }
 
 
@@ -247,7 +245,7 @@ function _flexibledate_from_values($year, $q, $day = FALSE) {
  * Convert a flexibledate value to text
  */
 function _flexibledate_to_text($value) {
-  if ($value === FALSE) {
+  if ($value === FALSE || $value === NULL) {
     return '';
   }
   
@@ -270,7 +268,7 @@ function _flexibledate_to_text($value) {
  * FALSE for no valid flexibledate.
  */
 function _flexibledate_to_values($value) {
-  if ($value === FALSE) {
+  if ($value === FALSE || $value === NULL) {
     return FALSE;
   }
   
