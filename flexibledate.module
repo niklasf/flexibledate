@@ -43,7 +43,7 @@ function flexibledate_field_validate($obj_type, $object, $field, $instance, $lan
       if (_flexibledate_to_values($item['value']) === FALSE) {
         $errors[$field['field_name']][$langcode][$delta][] = array(
           'error' => 'flexibledate_invalid',
-          'message' => t('A valid date is <em>dd.mm.yyyy.</em>. A valid quarter is <em>q/yyyy</em>'),
+          'message' => t('A valid date is <em>dd.mm.yyyy</em>. A valid quarter is <em>q/yyyy</em>.'),
         );
       }
     }
@@ -54,7 +54,7 @@ function flexibledate_field_validate($obj_type, $object, $field, $instance, $lan
  * Implement hook_field_is_empty().
  */
 function flexibledate_field_is_empty($item, $field) {
-  return empty($item['value']);
+  return $item['value'] === NULL;
 }
 
 /**
@@ -121,7 +121,11 @@ function flexibledate_field_widget_form(&$form, &$form_state, $field, $instance,
  * Convert the entered text to something that can be stored in the database.
  */
 function _flexibledate_textfield_validate($element, &$form_state) {
-  print '<pre>' . var_dump($element) . '</pre>';
+  $field_name = substr($element['#name'], 0, strpos($element['#name'], '['));
+  if (isset($form_state['values'][$field_name][$element['#langcode']][0])) {
+    $values = $form_state['values'][$field_name][$element['#langcode']][0];
+    form_set_value($element, array('value' => _flexibledate_from_text($values)), $form_state);
+  }
 }
 
 /**
@@ -139,6 +143,10 @@ function flexibledate_field_widget_error($element, $error) {
  * Convert text to a flexibledate value
  */
 function _flexibledate_from_text($text) {
+  if (trim($text) === '') {
+    return NULL;
+  }
+
   if (preg_match('/^\s*(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})\s*$/', $text, $matches)) {
     return _flexibledate_from_values($matches[3], $matches[2], $matches[1]);
   } else if (preg_match('/^\s*0?([1-4])\s*\/\s*(\d{2}|\d{4})\s*$/', $text, $matches)) {
@@ -213,7 +221,11 @@ function _flexibledate_from_values($year, $q, $day = FALSE) {
  * Convert a flexibledate value to text
  */
 function _flexibledate_to_text($value) {
-  if ($value === FALSE || $value === NULL) {
+  if ($value === FALSE) {
+    return FALSE;
+  }
+  
+  if ($value === NULL) {
     return '';
   }
   
@@ -236,8 +248,12 @@ function _flexibledate_to_text($value) {
  * FALSE for no valid flexibledate.
  */
 function _flexibledate_to_values($value) {
-  if ($value === FALSE || $value === NULL) {
+  if ($value === FALSE) {
     return FALSE;
+  }
+  
+  if ($value === NULL) {
+    return NULL;
   }
   
   $value = intval($value);
