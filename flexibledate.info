@@ -1,5 +1,6 @@
 ; $Id$
 name = Flexibledate
 description = Defines a field type that can contain either a full date or a quarter.
-package = CCK
+package = Fields
 core = 7.x
+files[] = flexibledate.module

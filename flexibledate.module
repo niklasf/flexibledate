@@ -2,160 +2,136 @@
 // $Id$
 
 /**
- * Implementation of hook_field_info().
+ * @file
+ * Defines the flexibledate field type.
+ */
+
+/**
+ * Implement hook_field_info().
  */
 function flexibledate_field_info() {
   return array(
-    'flexibledate' => array(
+    'flexibledate_date' => array(
       'label' => t('Flexibledate'),
-      'description' => t('Store a full date or a quarter'),
+      'description' => t('Stores a full date or a quarter.'),
+      'default_widget' => 'flexibledate_textfield',
+      'default_formatter' => 'flexibledate_plaintext',
     ),
   );
 }
 
 /**
- * Implementation of hook_field_settings().
+ * Implement hook_field_schema().
  */
-function flexibledate_field_settings($op, $field) {
-  switch($op) {
-    // No settings for the field
-    case 'form':
-    case 'save':
-      return array();
-    
-    // The stored value is a unixtimestamp.
-    // If the stored value is a quarter then it is flagged
-    // by making the value % 2 == 1.
-    // Also, in that case the month is either 1, 4, 7 or 10.
-    case 'database columns':
-      return array(
-        'value' => array(
-          'type' => 'int',
-          'not null' => FALSE,
-          'sortable' => TRUE,
-          'views' => TRUE,
-        ),
-      );
-  }
+function flexibledate_field_schema($field) {
+  return array(
+    'columns' => array(
+      'value' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+      ),
+    ),
+  );
 }
 
 /**
- * Implementation of hook_field().
+ * Implement hook_field_schema().
  */
-function flexibledate_field($op, &$node, $field, &$items, $teaser, $page) {
-  switch ($op) {
-    case 'validate':
-      if (is_array($items)) {
-        foreach ($items as $delta => $item) {
-          $error_element = $field['field_name'] . '][' . $delta . '][value';
-          if ($item['value'] !== NULL && $item['value'] === FALSE) {
-            form_set_error($error_element, t('The value must be a valid date or quarter.'));
-          }
-        }
+function flexibledate_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
+  foreach ($items as $delta => $item) {
+    if (isset($item['value'])) {
+      if (FALSE) { // XXX
+        $errors[$field['field_name']][$langcode][$delta][] = array(
+          'error' => 'flexibledate_invalid',
+          'message' => t('A valid date is <em>dd.mm.yyyy.</em>. A valid quarter is <em>q/yyyy</em>'),
+        );
       }
-      return $items;
+    }
   }
 }
 
 /**
- * Implementation of hook_field_is_empty().
+ * Implement hook_field_is_empty().
  */
 function flexibledate_field_is_empty($item, $field) {
-  return $item['value'] === '' || $item['value'] === FALSE || $item['value'] === NULL;
-}
-
-// TODO: Consider implementing hook_content_generate().
-
-// TODO: Consider implementing hook_token_list().
-// TODO: Consider implementing hook_token_values().
-
-/**
- * Implementation of hook_theme().
- */
-function flexibledate_theme() {
-  return array(
-    'flexibledate_formatter_default' => array(
-      'arguments' => array('element' => NULL),
-    ),
-  );
+  return empty($item['value']);
 }
 
 /**
- * Implementation of hook_field_formatter_info().
+ * Implement hook_field_formatter_info().
  */
 function flexibledate_field_formatter_info() {
   return array(
-    'default' => array(
-      'label' => t('Default'),
-      'field types' => array('flexibledate'),
+    'flexibledate_plaintext' => array(
+      'label' => t('Plaintext'),
+      'field types' => array('flexibledate_value'),
     ),
   );
 }
 
 /**
- * Defauilt theme function.
+ * Implement hook_field_formatter_view().
  */
-function theme_flexibledate_formatter_default($element) {
-  return _flexibledate_to_text($element['#item']['value']);
-}
-
-/**
- * Implementation of hook_widget_info().
- */
-function flexibledate_widget_info() {
-  return array(
-    'flexibledate_widget' => array(
-      'label' => t('Textfield'),
-      'field types' => array('flexibledate'),
-    ),
-  );
-}
-
-/**
- * Implementation of hook_widget_settings().
- */
-function flexibledate_widget_settings($op, $widget) {
-  switch ($op) {
-    // No settings for the widget
-    case 'form':
-    case 'save':
-      return array();
-  }
-}
-
-/**
- * Implementation of hook_widget().
- */
-function flexibledate_widget(&$form, &$form_state, $field, $items, $delta = 0) {
-  $element = array(
-    'value' => array(
-      '#type' => 'textfield',
-      '#title' => check_plain($field['widget']['label']),
-      '#description' => check_plain($field['widget']['description']),
-      '#default_value' => isset($items[$delta]['value']) ? _flexibledate_to_text($items[$delta]['value']) : NULL,
-      '#size' => 10,
-      '#element_validate' => array('flexibledate_validate'),
-    ),
-  );
+function flexibledate_field_formatter_view($object_type, $object, $field, $instance, $langcode, $items, $display) {
+  $element = array();
   
-  if (empty($form['#parents'])) {
-    $form['#parents'] = array();
+  if ($display['type'] = 'flexibledate_plaintext') {
+    foreach ($items as $delta => $item) {
+      $element[$delta] = $item['value']; // XXX
+    }
   }
-  $element['_error_element'] = array(
-    '#type' => 'value',
-    '#value' => implode('][', array_merge(array_merge(array($field['field_name']), array($delta)), array('value'))),
-  );
   
   return $element;
 }
 
 /**
- * FAPI validation of a flexibledate widget.
+ * Implement hook_field_widget_info().
  */
-function flexibledate_validate($element, &$form_state) {
-  form_set_value($element, trim($element['#value']) !== '' ? _flexibledate_from_text($element['#value']) : NULL, $form_state);
+function flexibledate_field_widget_info() {
+  return array(
+    'flexibledate_textfield' => array(
+      'label' => t('Textfield'),
+      'field types' => array('flexibledate_date'),
+    ),
+  );
 }
 
+/**
+ * Implement hook_field_widget().
+ */
+function flexibledate_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta = 0) {
+  $element = array(
+    '#type' => 'textfield',
+    '#element_validate' => array('_flexibledate_textfield_validate'),
+    '#langcode' => $langcode, // TODO: Check if #langcode is necessary
+    '#size' => 10,
+  );
+  
+  if (isset($items[$delta])) {
+    $element['#default_value'] = $items[$delta]['value']; // XXX
+  }
+  
+  return $element;
+}
+
+/**
+ * FAPI validation callback.
+ * Convert the entered text to something that can be stored in the database.
+ */
+function _flexibledate_textfield_validate($element, &$form_state) {
+  print '<pre>' . var_dump($element) . '</pre>';
+}
+
+/**
+ * Implement hook_field_widget_error().
+ */
+function flexibledate_field_widget_error($element, $error) {
+  switch ($error['error']) {
+    case 'flexibledate_invalid':
+      form_error($element, $error['message']);
+      break;
+  }
+}
 
 /**
  * Convert text to a flexibledate value
