@@ -77,7 +77,7 @@ function flexibledate_field_formatter_view($object_type, $object, $field, $insta
   
   if ($display['type'] = 'flexibledate_plaintext') {
     foreach ($items as $delta => $item) {
-      $element[$delta] = _flexibledate_to_text($item['value']);
+      $element[$delta] = array('#markup' => _flexibledate_to_text($item['value']));
     }
   }
   
