@@ -103,8 +103,10 @@ function flexibledate_field_widget_form(&$form, &$form_state, $field, $instance,
   $element = array(
     '#type' => 'textfield',
     '#element_validate' => array('_flexibledate_textfield_validate'),
-    '#langcode' => $langcode, // TODO: Check if #langcode is necessary
+    '#langcode' => $langcode,
     '#size' => 10,
+    '#title' => $instance['label'],
+    '#description' => isset($instance['description']) ? $instance['description'] : '',
   );
   
   if (isset($items[$delta])) {
