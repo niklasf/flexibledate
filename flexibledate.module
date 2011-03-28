@@ -40,7 +40,7 @@ function flexibledate_field_schema($field) {
 function flexibledate_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
   foreach ($items as $delta => $item) {
     if (isset($item['value'])) {
-      if (FALSE) { // XXX
+      if (_flexibledate_to_values($item['value']) === FALSE) {
         $errors[$field['field_name']][$langcode][$delta][] = array(
           'error' => 'flexibledate_invalid',
           'message' => t('A valid date is <em>dd.mm.yyyy.</em>. A valid quarter is <em>q/yyyy</em>'),
@@ -77,7 +77,7 @@ function flexibledate_field_formatter_view($object_type, $object, $field, $insta
   
   if ($display['type'] = 'flexibledate_plaintext') {
     foreach ($items as $delta => $item) {
-      $element[$delta] = $item['value']; // XXX
+      $element[$delta] = _flexibledate_to_text($item['value']);
     }
   }
   
@@ -108,7 +108,7 @@ function flexibledate_field_widget_form(&$form, &$form_state, $field, $instance,
   );
   
   if (isset($items[$delta])) {
-    $element['#default_value'] = $items[$delta]['value']; // XXX
+    $element['#default_value'] = _flexibledate_to_text($items[$delta]['value']);
   }
   
   return $element;
