@@ -36,11 +36,6 @@ function flexibledate_field_settings($op, $field) {
           'views' => TRUE,
         ),
       );
-    
-    // TODO: Test views integration
-    case 'views data':
-      $data = content_views_field_views_data($field);
-      return $data;
   }
 }
 
