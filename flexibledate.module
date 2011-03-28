@@ -88,7 +88,6 @@ function flexibledate_field_formatter_info() {
     'default' => array(
       'label' => t('Default'),
       'field types' => array('flexibledate'),
-      'multiple values' => CONTENT_HANDLE_CORE,
     ),
   );
 }
@@ -108,10 +107,6 @@ function flexibledate_widget_info() {
     'flexibledate_widget' => array(
       'label' => t('Textfield'),
       'field types' => array('flexibledate'),
-      'multiple values' => CONTENT_HANDLE_CORE,
-      'callbacks' => array(
-        'default value' => CONTENT_CALLBACK_DEFAULT,
-      ),
     ),
   );
 }
