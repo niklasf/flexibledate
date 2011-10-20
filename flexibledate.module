@@ -143,6 +143,34 @@ class Flexibledate {
   }
 
   /**
+   * Validates a quarter.
+   *
+   * @param $quarter
+   *  The quarter (1, 2, 3, 4).
+   *
+   * @return
+   *  TRUE if valid.
+   */
+  public static function checkQuarter($quarter) {
+    $quarter = intval($quarter);
+    return $quarter >= 1 && $quarter <= 4;
+  }
+
+  /**
+   * Validates a year.
+   *
+   * @param $year
+   *  The year, i.e. 1967.
+   *
+   * @return
+   *  TRUE if valid.
+   */
+  public static function checkYear($year) {
+    $year = intval($year);
+    return $year >= 1900 && $year <= date('Y', REQUEST_TIME) + 100;
+  }
+
+  /**
    * Creates a Flexibledate instance from a given year.
    *
    * @param $year
@@ -152,6 +180,10 @@ class Flexibledate {
    *  The related Flexibledate instance.
    */
   public static function createFromYear($year) {
+    if (!self::checkYear($year)) {
+      return self::createInvalid();
+    }
+
     return new Flexibledate(mktime(
       1, // hour
       0, // minute
@@ -174,6 +206,10 @@ class Flexibledate {
    *  The related Flexibledate instance.
    */
   public static function createFromQuarter($quarter, $year) {
+    if (!self::checkYear($year) || !self::checkQuarter($quarter)) {
+      return self::createInvalid();
+    }
+
     return new Flexibledate(mktime(
       1, // hour
       0, // minute
@@ -198,6 +234,10 @@ class Flexibledate {
    *  The related Flexibledate instance.
    */
   public static function createFromDate($day, $month, $year) {
+    if (!self::checkYear($year) || !checkdate($month, $day, $year)) {
+      return self::createInvalid();
+    }
+
     return new Flexibledate(mktime(
       1, // hour
       0, // minute
