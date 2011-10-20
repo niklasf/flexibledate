@@ -451,7 +451,8 @@ function flexibledate_field_widget_form(&$form, &$form_state, $field, $instance,
  * Converts the entered text to something that can be stored in the database.
  */
 function _flexibledate_textfield_validate($element, &$form_state) {
-  form_set_value($element, Flexibledate::createFromString($element['#value'])->getValue(), $form_state);
+  $value = Flexibledate::createFromString($element['#value'])->getValue();
+  form_set_value($element, array('value' => $value), $form_state);
 }
 
 /**
