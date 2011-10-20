@@ -366,20 +366,6 @@ function flexibledate_field_info() {
 }
 
 /**
- * Implements hook_field_schema().
- */
-function flexibledate_field_schema($field) {
-  return array(
-    'columns' => array(
-      'value' => array(
-        'type' => 'int',
-        'not null' => FALSE,
-      ),
-    ),
-  );
-}
-
-/**
  * Implements hook_field_validate().
  */
 function flexibledate_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {

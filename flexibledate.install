@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Installing and updating the schema of the flexibledate field type.
+ */
+
+/**
+ * Implements hook_field_schema().
+ */
+function flexibledate_field_schema($field) {
+  return array(
+    'columns' => array(
+      'value' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+      ),
+    ),
+  );
+}
