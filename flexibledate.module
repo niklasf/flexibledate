@@ -246,15 +246,15 @@ class Flexibledate {
   public static function createFromString($string) {
     $string = trim($string);
 
-    if (preg_match('/$[0-9]{4}^/', $string)) {
-      return self::createFromYear();
+    if (preg_match('/^[0-9]{4}$/', $string)) {
+      return self::createFromYear($string);
     }
 
-    if (preg_match('/$([1-4])\/([0-9]{4})^/', $string, $match)) {
+    if (preg_match('/^([1-4])\/([0-9]{4})$/', $string, $match)) {
       return self::createFromQuarter($match[1], $match[2]);
     }
 
-    if (preg_match('/$([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})/', $string, $match)) {
+    if (preg_match('/^([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})$/', $string, $match)) {
       return self::createFromDate($match[1], $match[2], $match[3]);
     }
 
