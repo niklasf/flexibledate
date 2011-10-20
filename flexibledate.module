@@ -234,6 +234,34 @@ class Flexibledate {
   }
 
   /**
+   * Parses a string to create a Flexibledate instance.
+   *
+   * @param $string
+   *  The input string.
+   *
+   * @return
+   *  The related Flexibledate instance. In the case of a parser error an
+   *  invalid instance will be created. Use the isValid() method to check.
+   */
+  public static function createFromString($string) {
+    $string = trim($string);
+
+    if (preg_match('/$[0-9]{4}^/', $string)) {
+      return self::createFromYear();
+    }
+
+    if (preg_match('/$([1-4])\/([0-9]{4})^/', $string, $match)) {
+      return self::createFromQuarter($match[1], $match[2]));
+    }
+
+    if (preg_match('/$([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})/', $string, $match) {
+      return self::createFromDate($match[1], $match[2], $match[3]);
+    }
+
+    return self::createInvalid();
+  }
+
+  /**
    * @return
    *  An empty Flexibldate instance.
    */
