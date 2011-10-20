@@ -56,7 +56,7 @@ class FlexibledateUnitTestCase extends DrupalUnitTestCase {
 
     $quarter = Flexibledate::createFromString(' 4/2012');
     $this->assertTrue($quarter->isValid());
-    $this->assertFalse($quarter->isEmtpy());
+    $this->assertFalse($quarter->isEmpty());
     $this->assertEqual($quarter->getQuarter(), 4);
     $this->assertEqual($quarter->getYear(), 2012);
     $this->assertEqual($quarter->toString(), '4/2012');
@@ -65,7 +65,7 @@ class FlexibledateUnitTestCase extends DrupalUnitTestCase {
     $this->assertTrue($date->isValid());
     $this->assertFalse($date->isEmpty());
     $this->assertEqual($date->getYear(), 2000);
-    $this->assertEuqal($date->getQuarter(), 2);
+    $this->assertEqual($date->getQuarter(), 2);
     $this->assertEqual($date->toString(), '24.05.2000');
 
     $invalid = Flexibledate::createFromString('-');
@@ -84,14 +84,14 @@ class FlexibledateUnitTestCase extends DrupalUnitTestCase {
     $invalid = Flexibledate::createFromString('06/2007');
     $this->assertFalse($invalid->isValid());
 
-    $invalid = Flexibldate::createFromString('29.02.2003');
+    $invalid = Flexibledate::createFromString('29.02.2003');
     $this->assertFalse($invalid->isValid());
 
     $invalid = Flexibledate::createFromDate(31, 09, 2011);
     $this->assertFalse($invalid->isValid());
 
     // This one is valid because of the leap year.
-    $valid = Flexibldate::createFromString('29.02.2000');
+    $valid = Flexibledate::createFromString('29.02.2000');
     $this->assertTrue($valid->isValid());
   }
 }
