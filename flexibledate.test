@@ -104,11 +104,11 @@ class FlexibledateUnitTestCase extends DrupalUnitTestCase {
     $this->assertTrue($empty->isEmpty());
     $this->assertTrue($empty->isValid());
 
-    $date = Flexibledate::createFromOldDatabase('2005-10-10', '0');
+    $date = Flexibledate::createFromOldDatabase('2005-10-09', '0');
     $this->assertTrue($date->isValid());
     $this->assertEqual($date->getYear(), 2005);
     $this->assertEqual($date->getQuarter(), 4);
-    $this->assertEqual($date->toString(), '10.10.2005');
+    $this->assertEqual($date->toString(), '09.10.2005');
 
     $quarter = Flexibledate::createFromOldDatabase('2012-00-00', '1');
     $this->assertTrue($quarter->isValid());
@@ -117,7 +117,7 @@ class FlexibledateUnitTestCase extends DrupalUnitTestCase {
     $this->assertEqual($quarter->getQuarter(), 1);
     $this->assertEqual($quarter->toString(), '1/2012');
 
-    $year_only = Flexibledate::createFromOldDatabase('2013', '0');
+    $year_only = Flexibledate::createFromOldDatabase('2013-00-00', '0');
     $this->assertTrue($year_only->isValid());
     $this->assertFalse($year_only->isEmpty());
     $this->assertEqual($year_only->getYear(), 2013);
