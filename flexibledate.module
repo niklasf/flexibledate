@@ -339,7 +339,7 @@ function flexibledate_field_validate($obj_type, $object, $field, $instance, $lan
  * Implements hook_field_is_empty().
  */
 function flexibledate_field_is_empty($item, $field) {
-  return $item['value'] === NULL;
+  return Flexibledate::createFromItem($item)->isEmpty();
 }
 
 /**
