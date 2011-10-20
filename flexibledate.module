@@ -246,6 +246,10 @@ class Flexibledate {
   public static function createFromString($string) {
     $string = trim($string);
 
+    if ($string === '') {
+      return self::createEmpty();
+    }
+
     if (preg_match('/^[0-9]{4}$/', $string)) {
       return self::createFromYear($string);
     }
