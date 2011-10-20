@@ -384,18 +384,15 @@ function flexibledate_field_widget_info() {
 /**
  * Implements hook_field_widget().
  */
-function flexibledate_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta = 0) {
-  $element = array(
+function flexibledate_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $element += array(
     '#type' => 'textfield',
-    '#element_validate' => array('_flexibledate_textfield_validate'),
-    '#langcode' => $langcode,
     '#size' => 10,
-    '#title' => $instance['label'],
-    '#description' => isset($instance['description']) ? $instance['description'] : '',
+    '#element_validate' => array('_flexibledate_textfield_validate'),
   );
 
   if (isset($items[$delta])) {
-    $element['#default_value'] = _flexibledate_to_text($items[$delta]['value']);
+    $element['#default_value'] = Flexibledate::createFromItem($items[$delta])->toString();
   }
 
   return $element;
