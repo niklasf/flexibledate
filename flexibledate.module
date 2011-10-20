@@ -358,7 +358,7 @@ function flexibledate_field_info() {
   return array(
     'flexibledate_date' => array(
       'label' => t('Flexibledate'),
-      'description' => t('Stores a full date or a quarter.'),
+      'description' => t('Stores a full date, a year or a quarter.'),
       'default_widget' => 'flexibledate_textfield',
       'default_formatter' => 'flexibledate_plaintext',
     ),
@@ -395,7 +395,7 @@ function flexibledate_field_formatter_info() {
   return array(
     'flexibledate_plaintext' => array(
       'label' => t('Plaintext'),
-      'field types' => array('flexibledate_value'),
+      'field types' => array('flexibledate_date'),
     ),
   );
 }
@@ -406,7 +406,7 @@ function flexibledate_field_formatter_info() {
 function flexibledate_field_formatter_view($object_type, $object, $field, $instance, $langcode, $items, $display) {
   $element = array();
 
-  if ($display['type'] = 'flexibledate_plaintext') {
+  if ($display['type'] == 'flexibledate_plaintext') {
     foreach ($items as $delta => $item) {
       $element[$delta] = array('#markup' => Flexibledate::createFromItem($item)->toString());
     }
