@@ -36,6 +36,7 @@ class FlexibledateUnitTestCase extends DrupalUnitTestCase {
      $empty = Flexibledate::createEmpty();
      $this->assertTrue($empty->isEmpty());
      $this->assertTrue($empty->isValid());
+     $this->assertIdentical($empty->toString(), '');
    }
 
    /**
@@ -71,7 +72,7 @@ class FlexibledateUnitTestCase extends DrupalUnitTestCase {
     $invalid = Flexibledate::createFromString('-');
     $this->assertFalse($invalid->isValid());
     $this->assertFalse($invalid->isEmpty());
-    $this->assertIdentical($invalid->toString(), NULL);
+    $this->assertIdentical($invalid->toString(), FALSE);
   }
 
   /**
