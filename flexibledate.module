@@ -6,6 +6,251 @@
  */
 
 /**
+ * Indicates a full date.
+ */
+define('FLEXIBLEDATE_DATE', 0);
+
+/**
+ * Indicates a year with a quarter.
+ */
+define('FLEXIBLEDATE_QUARTER', 1);
+
+/**
+ * Indicates only a year.
+ */
+define('FLEXIBLEDATE_YEAR', 2);
+
+/**
+ * Represents a flexibledate value.
+ */
+class Flexibledate {
+
+  /**
+   * The internal value as stored in the database or FALSE if an invalid value
+   * is represented.
+   */
+  protected $value;
+
+  /**
+   * Creates a Flexibledate instance.
+   *
+   * @param $value
+   *   The value as stored in the database.
+   */
+  public function __construct($value) {
+    $this->value = $value;
+  }
+
+  /**
+   * @return
+   *  If the encapsulated value is empty or not.
+   */
+  public function isEmpty() {
+    return $this->value !== NULL;
+  }
+
+  /**
+   * @return
+   *  If teh encapsulated value is valid or not.
+   */
+  public function isValid() {
+    return $this->value !== FALSE;
+  }
+
+  /**
+   * @return
+   *  The value as stored in the database.
+   */
+  public function getValue() {
+    return $this->value;
+  }
+
+  /**
+   * @return
+   *  NULL, FALSE, FLEXIBLEDATE_YEAR, FLEXIBLEDATE_QUARTER; FLEXIBLEDATE_DATE
+   *  if empty, invalid, a year, a quarter or a date.
+   */
+  public function getType() {
+    if ($this->value === NULL || $this->value === FALSE) {
+      return $this->value;
+    }
+
+    return substr($this->value, -1);
+  }
+
+  /**
+   * @return
+   *  The year. NULL or FALSE if empty or invalid.
+   */
+  public function getYear() {
+    if ($this->value === NULL || $this->value === FALSE) {
+      return $this->value;
+    }
+
+    return date('Y', $this->value);
+  }
+
+  /**
+   * @return
+   *  The quarter (1, 2, 3, 4) of the year. NULL or FALSE if empty ro invalid.
+   */
+  public function getQuarter() {
+    if ($this->value === NULL || $this->value === FALSE) {
+      return $this->value;
+    }
+
+    switch (date('m', $this->value)) {
+      case 1:
+      case 2:
+      case 3:
+        return 1;
+      case 4:
+      case 5:
+      case 6:
+        return 2;
+      case 7:
+      case 8:
+      case 9:
+        return 3;
+      case 10:
+      case 11:
+      case 12:
+        return 4;
+    }
+  }
+
+  /**
+   * @return
+   *  The string representation of the stored value or FALSE if invalid.
+   */
+  public function toString() {
+    if ($this->value === NULL) {
+      return '';
+    }
+
+    if ($this->value === FALSE) {
+      return FALSE;
+    }
+
+    switch ($this->getType()) {
+      case FLEXIBLEDATE_DATE:
+        return date('d.m.Y', $this->value);
+      case FLEXIBLEDATE_QUARTER:
+        return $this->getQuarter() . '/' . $this->getYear();
+      case FLEXIBLEDATE_YEAR:
+        return $this->getYear();
+    }
+  }
+
+  /**
+   * Creates a Flexibledate instance from a given year.
+   *
+   * @param $year
+   *  The year.
+   *
+   * @return
+   *  The related Flexibledate instance.
+   */
+  public static function createFromYear($year) {
+    return new Flexibledate(mktime(
+      1, // hour
+      0, // minute
+      FLEXIBLEDATE_YEAR, // second, used as a marker
+      1, // month
+      1, // day
+      $year
+    ));
+  }
+
+  /**
+   * Creates a Flexibledate instance from a given quarter and year.
+   *
+   * @param $quarter
+   *  The quarter (1, 2, 3, 4) of the year.
+   * @param $year
+   *  The year.
+   *
+   * @return
+   *  The related Flexibledate instance.
+   */
+  public static function createFromQuarter($quarter, $year) {
+    return new Flexibledate(mktime(
+      1, // hour
+      0, // minute
+      FLEXIBLEDATE_QUARTER, // second, used as a marker
+      $quarter * 3 - 2, // first month of the quarter
+      1,
+      $year
+    ));
+  }
+
+  /**
+   * Creates a Flexibledate instance from a given day, month and year.
+   *
+   * @param $day
+   *  The day of the month.
+   * @param $month
+   *  The month.
+   * @param $year
+   *  The year.
+   *
+   * @return
+   *  The related Flexibledate instance.
+   */
+  public static function createFromDate($day, $month, $year) {
+    return new Flexibledate(mktime(
+      1, // hour
+      0, // minute
+      FLEXIBLEDATE_DATE, // second, used as a marker
+      $month,
+      $day,
+      $year
+    ));
+  }
+
+  /**
+   * Creates a Flexibledate instance from values of the old Consolero database.
+   *
+   * @param $releasedate
+   *  The releasedate column of the games table as a string, i.e. 2013-00-00.
+   * @param $releaseq = 0
+   *  The releaseq column of the games table.
+   *
+   * @return
+   *  The related Flexibledate instance.
+   */
+  public static function createFromOldDatabase($releasedate, $releaseq = 0) {
+    if (!$releasedate || $releasedate == '0000-00-00') {
+      return self::createEmpty();
+    }
+
+    $time = strtotime($releasedate);
+
+    if (!$releaseq) {
+      return self::createFromDate(date('d', $time), date('m', $time), date('Y', $time));
+    }
+
+    return self::createFromQuarter($releaseq, date('Y', $time));
+  }
+
+  /**
+   * @return
+   *  An empty Flexibldate instance.
+   */
+  public static function createEmpty() {
+    return new Flexibledate(NULL);
+  }
+
+  /**
+   * @return
+   *  An invalid Flexibldate instance.
+   */
+  public static function createInvalid() {
+    return new Flexibledate(FALSE);
+  }
+}
+
+/**
  * Implements hook_field_info().
  */
 function flexibledate_field_info() {
