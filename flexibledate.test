@@ -95,4 +95,32 @@ class FlexibledateUnitTestCase extends DrupalUnitTestCase {
     $valid = Flexibledate::createFromString('29.02.2000');
     $this->assertTrue($valid->isValid());
   }
+
+  /**
+   * Test creation from old database values.
+   */
+  public function testOldDatabase() {
+    $empty = Flexibledate::createFromOldDatabase('0000-00-00', '0');
+    $this->assertTrue($empty->isEmpty());
+    $this->assertTrue($empty->isValid());
+
+    $date = Flexibledate::createFromOldDatabase('2005-10-10', '0');
+    $this->assertTrue($date->isValid());
+    $this->assertEqual($date->getYear(), 2005);
+    $this->assertEqual($date->getQuarter(), 4);
+    $this->assertEqual($date->toString(), '10.10.2005');
+
+    $quarter = Flexibledate::createFromOldDatabase('2012-00-00', '1');
+    $this->assertTrue($quarter->isValid());
+    $this->assertFalse($quarter->isEmpty());
+    $this->assertEqual($quarter->getYear(), 2012);
+    $this->assertEqual($quarter->getQuarter(), 1);
+    $this->assertEqual($quarter->toString(), '1/2012');
+
+    $year_only = Flexibledate::createFromOldDatabase('2013', '0');
+    $this->assertTrue($year_only->isValid());
+    $this->assertFalse($year_only->isEmpty());
+    $this->assertEqual($year_only->getYear(), 2013);
+    $this->assertEqual($year_only->toString(), '2013');
+  }
 }
