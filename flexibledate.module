@@ -143,6 +143,18 @@ class Flexibledate {
   }
 
   /**
+   * @return
+   *  An item as a part of the field value array.
+   */
+  public function toItem() {
+    if ($this->value === FALSE) {
+      return array('value' => NULL);
+    }
+
+    return array('value' => $this->value);
+  }
+
+  /**
    * Validates a quarter.
    *
    * @param $quarter
