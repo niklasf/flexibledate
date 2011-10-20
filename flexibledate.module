@@ -264,13 +264,17 @@ class Flexibledate {
       return self::createEmpty();
     }
 
-    $time = strtotime($releasedate);
+    list($year, $month, $day) = explode('-', $releasedate, 3);
 
-    if (!$releaseq) {
-      return self::createFromDate(date('d', $time), date('m', $time), date('Y', $time));
+    if ($releaseq) {
+      return self::createFromQuarter($releaseq, $year);
     }
 
-    return self::createFromQuarter($releaseq, date('Y', $time));
+    if ($month == 0 || $day == 0) {
+      return self::createFromYear($year);
+    }
+
+    return self::createFromDate($day, $month, $year);
   }
 
   /**
