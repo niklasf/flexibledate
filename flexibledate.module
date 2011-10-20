@@ -251,14 +251,27 @@ class Flexibledate {
     }
 
     if (preg_match('/$([1-4])\/([0-9]{4})^/', $string, $match)) {
-      return self::createFromQuarter($match[1], $match[2]));
+      return self::createFromQuarter($match[1], $match[2]);
     }
 
-    if (preg_match('/$([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})/', $string, $match) {
+    if (preg_match('/$([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{4})/', $string, $match)) {
       return self::createFromDate($match[1], $match[2], $match[3]);
     }
 
     return self::createInvalid();
+  }
+
+  /**
+   * Creates a Flexibledat instance from the field value array.
+   *
+   * @param $item
+   *  The field value array with $item['value'] set.
+   *
+   * @return
+   *  The related Flexibledate instance.
+   */
+  public static function createFromItem($item) {
+    return new Flexibledate($item['value']);
   }
 
   /**
@@ -312,10 +325,10 @@ function flexibledate_field_schema($field) {
 function flexibledate_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
   foreach ($items as $delta => $item) {
     if (isset($item['value'])) {
-      if (_flexibledate_to_values($item['value']) === FALSE) {
+      if (!Flexibledate::createFromItem($item)->isValid()) {
         $errors[$field['field_name']][$langcode][$delta][] = array(
           'error' => 'flexibledate_invalid',
-          'message' => t('A valid date is <em>dd.mm.yyyy</em>. A valid quarter is <em>q/yyyy</em>.'),
+          'message' => t('A valid date is <em>dd.mm.yyyy</em>. A valid quarter is <em>q/yyyy</em>. A valid year if <em>yyyy</em>.'),
         );
       }
     }
