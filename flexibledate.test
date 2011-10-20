@@ -47,7 +47,7 @@ class FlexibledateUnitTestCase extends DrupalUnitTestCase {
     $this->assertTrue($year_only->isValid());
     $this->assertEqual($year_only->toString(), '2009');
     $this->assertEqual($year_only->getYear(), 2009);
-    $this->assertEuqal($year_only->getType(), FLEXIBLEDATE_YEAR);
+    $this->assertEqual($year_only->getType(), FLEXIBLEDATE_YEAR);
 
     $empty = Flexibledate::createFromString('   ');
     $this->assertTrue($empty->isEmpty());
