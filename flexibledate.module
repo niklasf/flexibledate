@@ -46,7 +46,7 @@ class Flexibledate {
    *  If the encapsulated value is empty or not.
    */
   public function isEmpty() {
-    return $this->value !== NULL;
+    return $this->value === NULL;
   }
 
   /**
