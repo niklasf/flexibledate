@@ -14,7 +14,17 @@ function flexibledate_field_schema($field) {
       'value' => array(
         'type' => 'int',
         'not null' => FALSE,
+        'size' => 'big',
+        'unsigned' => FALSE,
       ),
     ),
   );
+}
+
+/**
+ * Update to 7.x-2.x by rebuilding the class cache. Unfortunately the schema
+ * can't be updated while http://drupal.org/node/937442 is not fixed.
+ */
+function flexibledate_update_7200() {
+  cache_clear_all();
 }
