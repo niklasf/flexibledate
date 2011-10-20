@@ -3,3 +3,4 @@ description = Defines a field type that can contain either a full date or a quar
 package = Fields
 core = 7.x
 files[] = flexibledate.module
+files[] = flexibledate.test
