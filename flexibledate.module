@@ -320,7 +320,7 @@ function flexibledate_field_schema($field) {
 }
 
 /**
- * Implements hook_field_schema().
+ * Implements hook_field_validate().
  */
 function flexibledate_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
   foreach ($items as $delta => $item) {
