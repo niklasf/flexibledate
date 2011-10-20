@@ -7,7 +7,7 @@
  */
 
 /**
- * Implement hook_field_info().
+ * Implements hook_field_info().
  */
 function flexibledate_field_info() {
   return array(
@@ -21,7 +21,7 @@ function flexibledate_field_info() {
 }
 
 /**
- * Implement hook_field_schema().
+ * Implements hook_field_schema().
  */
 function flexibledate_field_schema($field) {
   return array(
@@ -35,7 +35,7 @@ function flexibledate_field_schema($field) {
 }
 
 /**
- * Implement hook_field_schema().
+ * Implements hook_field_schema().
  */
 function flexibledate_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
   foreach ($items as $delta => $item) {
@@ -51,14 +51,14 @@ function flexibledate_field_validate($obj_type, $object, $field, $instance, $lan
 }
 
 /**
- * Implement hook_field_is_empty().
+ * Implements hook_field_is_empty().
  */
 function flexibledate_field_is_empty($item, $field) {
   return $item['value'] === NULL;
 }
 
 /**
- * Implement hook_field_formatter_info().
+ * Implements hook_field_formatter_info().
  */
 function flexibledate_field_formatter_info() {
   return array(
@@ -70,22 +70,22 @@ function flexibledate_field_formatter_info() {
 }
 
 /**
- * Implement hook_field_formatter_view().
+ * Implements hook_field_formatter_view().
  */
 function flexibledate_field_formatter_view($object_type, $object, $field, $instance, $langcode, $items, $display) {
   $element = array();
-  
+
   if ($display['type'] = 'flexibledate_plaintext') {
     foreach ($items as $delta => $item) {
       $element[$delta] = array('#markup' => _flexibledate_to_text($item['value']));
     }
   }
-  
+
   return $element;
 }
 
 /**
- * Implement hook_field_widget_info().
+ * Implements hook_field_widget_info().
  */
 function flexibledate_field_widget_info() {
   return array(
@@ -97,7 +97,7 @@ function flexibledate_field_widget_info() {
 }
 
 /**
- * Implement hook_field_widget().
+ * Implements hook_field_widget().
  */
 function flexibledate_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta = 0) {
   $element = array(
@@ -108,17 +108,17 @@ function flexibledate_field_widget_form(&$form, &$form_state, $field, $instance,
     '#title' => $instance['label'],
     '#description' => isset($instance['description']) ? $instance['description'] : '',
   );
-  
+
   if (isset($items[$delta])) {
     $element['#default_value'] = _flexibledate_to_text($items[$delta]['value']);
   }
-  
+
   return $element;
 }
 
 /**
  * FAPI validation callback.
- * Convert the entered text to something that can be stored in the database.
+ * Converts the entered text to something that can be stored in the database.
  */
 function _flexibledate_textfield_validate($element, &$form_state) {
   $field_name = substr($element['#name'], 0, strpos($element['#name'], '['));
@@ -129,7 +129,7 @@ function _flexibledate_textfield_validate($element, &$form_state) {
 }
 
 /**
- * Implement hook_field_widget_error().
+ * Implements hook_field_widget_error().
  */
 function flexibledate_field_widget_error($element, $error) {
   switch ($error['error']) {
@@ -140,7 +140,7 @@ function flexibledate_field_widget_error($element, $error) {
 }
 
 /**
- * Convert text to a flexibledate value
+ * Converts text to a flexibledate value.
  */
 function _flexibledate_from_text($text) {
   if (trim($text) === '') {
@@ -157,17 +157,17 @@ function _flexibledate_from_text($text) {
 }
 
 /**
- * Convert values to a flexibledate value
+ * Converts values to a flexibledate value.
  */
 function _flexibledate_from_values($year, $q, $day = FALSE) {
   // If a day is given, then $q is a month, otherwise a quarter
   $fulldate = $day !== FALSE ? 1 : 0;
-  
+
   // All parameters are integers
   $year = intval($year);
   $q = intval($q);
   $day = intval($day);
-  
+
   // Validate year
   if ($year > 70 && $year <= 99) {
     $year += 1900;
@@ -177,21 +177,21 @@ function _flexibledate_from_values($year, $q, $day = FALSE) {
   if ($year < 1970 || $year > date('Y') + 50) {
     return FALSE;
   }
-  
+
   if ($fulldate) { // A day is given, so $q is the month
     // Validate month
     if ($q < 1 || $q > 12) {
       return FALSE;
     }
-    
+
     // The maximum days of a month (no leap year)
     $maxdays = array(0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
-    
+
     // Leap years
     if ($year % 400 == 0 || ($year % 4 == 0 && $year % 100 != 0)) {
       $maxdays[2] = 29;
     }
-    
+
     // Validate day
     if ($day < 1 || $day > $maxdays[$q]) {
       return FALSE;
@@ -201,11 +201,11 @@ function _flexibledate_from_values($year, $q, $day = FALSE) {
     if ($q < 1 || $q > 4) {
       return FALSE;
     }
-    
+
     $q = $q * 3 - 2; // Now lets make a month from it anyway
     $day = 1; // And a valid day
   }
-  
+
   // Create a unix timestamp
   return mktime(
     1, // hour
@@ -218,19 +218,19 @@ function _flexibledate_from_values($year, $q, $day = FALSE) {
 }
 
 /**
- * Convert a flexibledate value to text
+ * Converts a flexibledate value to text.
  */
 function _flexibledate_to_text($value) {
   if ($value === FALSE) {
     return FALSE;
   }
-  
+
   if ($value === NULL) {
     return '';
   }
-  
+
   $value = intval($value);
-  
+
   if ($value % 2 == 0) { // Full date
     return date('d.m.Y', $value);
   } else { // Quarter
@@ -239,11 +239,13 @@ function _flexibledate_to_text($value) {
 }
 
 /**
- * Convert a flexibledate value to an array that has these indexes:
- * - year
- * - month
- * - day
- * - quarter
+ * Converts a flexibledate value to an array that has these indexes:
+ *
+ *  - year
+ *  - month
+ *  - day
+ *  - quarter
+ *
  * Either year, month and day ar set or year and quarter.
  * FALSE for no valid flexibledate.
  */
@@ -251,13 +253,13 @@ function _flexibledate_to_values($value) {
   if ($value === FALSE) {
     return FALSE;
   }
-  
+
   if ($value === NULL) {
     return NULL;
   }
-  
+
   $value = intval($value);
-  
+
   if ($value % 2 == 0) { // Full date
     return array(
       'year' => intval(date('Y', $value)),
